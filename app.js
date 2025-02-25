@@ -1,12 +1,4 @@
 
-// document.querySelectorAll("#buttonContainer img").forEach(img => {
-//   img.addEventListener("contextmenu", event => event.preventDefault()); // Disable right-click
-//   img.addEventListener("touchstart", event => {
-//     event.preventDefault(); // Disable long-press
-//   }); 
-// });
-
-
 let restartBtn = document.getElementById("restartBtn");
 let saveTimeBtn = document.getElementById("saveTimeBtn");
 let startStopBtn = document.getElementById("startStopBtn");
@@ -22,9 +14,7 @@ let pose1 = true; // for mainSecondCountFun
 
 let startStopBtnCount = 0;
 startStopBtn.addEventListener('click', () => {
-  console.log('long');
   setTimeout(mainSecondCountFun, 10);
-
 
   startStopBtnCount++;
   if (startStopBtnCount % 2 !== 0) {
@@ -70,15 +60,25 @@ let clockHistory = document.getElementById("clockHistory");
 
 let indexOfHistry = 0;
 
+let differenceTwoOld = 0;
+
 saveTimeBtn.addEventListener('click', () => {
   if(timeSaveActive){
-  indexOfHistry++;
-  indexOfHistry = String(indexOfHistry).padStart(2, "0");
-  clockHistory.style.cssText = "width: 100%; display: block; height: 80%; margin-top: 30px;";
-  let newRow = document.createElement("div");
-  newRow.id = 'clockHistoryRow';
-  newRow.innerHTML = `<p id="clockIndex">${indexOfHistry}</p> <p id="differenceTwo">+ 00:00:09</p> <p id="when">${timeTextGenerate(mainMilliSecond, mainSecond, mainMinute)}</p>`;
-  clockHistory.insertBefore(newRow, clockHistory.firstChild);
+    indexOfHistry++;
+    indexOfHistry = String(indexOfHistry).padStart(2, "0");
+    let when = timeTextGenerate(mainMilliSecond, mainSecond, mainMinute);
+    
+   
+    let differenceTwo = timeToNum(when) - differenceTwoOld;
+    let differenceTwoInNum = '+ ' + numToTime(differenceTwo);
+    differenceTwoOld = timeToNum(when);
+    
+    
+    clockHistory.style.cssText = "width: 100%; display: block; height: 80%; margin-top: 30px;";
+    let newRow = document.createElement("div");
+    newRow.id = 'clockHistoryRow';
+    newRow.innerHTML = `<p id="clockIndex">${indexOfHistry}</p> <p id="differenceTwo">${differenceTwoInNum}</p> <p id="when">${when}</p>`;
+    clockHistory.insertBefore(newRow, clockHistory.firstChild);
   }
 })
 
@@ -94,4 +94,26 @@ const timeTextGenerate = (m,s,mi) =>{
 } // generate this format : 02:04:03
 
 
+
+const timeToNum =  (time) =>{
+  let num = '';
+  for(i of time){
+    if(i != ':')
+      num = num+i;
+  }
+  return num;
+}
+
+const numToTime = (num) => {
+  num = String(num).padStart(6, "0");
+  let time = '';
+  let j = 0;
+  for(i of num){
+    time = time + i;
+    j++;
+    if(j==2 || j == 4)
+      time = time + ':';
+  }
+  return time;
+}
 
